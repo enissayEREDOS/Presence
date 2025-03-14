@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Postes Disponibles</title>
+    <style>
+        /* Global Styles */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: #f0f4f8;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        /* Main Content Styles */
+        .content {
+            padding: 40px 20px;
+        }
+
+        .postes {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .poste {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .poste:hover {
+            transform: translateY(-5px);
+        }
+
+        .poste h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .poste p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Background Styles */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #f0f4f8;
+            z-index: -1;
+        }
+
+        .background svg {
+            position: absolute;
+            width: 100%;
+            height: 30%;
+            bottom: 0;
+            left: 0;
+        }
+
+        .background .circle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+        }
+
+        .circle-2 {
+            width: 400px;
+            height: 400px;
+            bottom: 10%;
+            right: 10%;
+        }
+
+        .circle-3 {
+            width: 200px;
+            height: 200px;
+            bottom: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .circle-4 {
+            width: 350px;
+            height: 350px;
+            top: 30%;
+            right: 10%;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Liste des Postes Disponibles</h1>
+</header>
+
+<div class="background">
+    <!-- Sinusoidal Curve -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1416.99 174.01">
+        <path class="cls-1" d="M0,280.8S283.66,59,608.94,163.56s437.93,150.57,808,10.34V309.54H0V280.8Z" fill="#007bff" />
+    </svg>
+
+    <!-- Background Circles -->
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+    <div class="circle circle-4"></div>
+</div>
+
+<div class="content">
+    <div class="postes">
+        {% for poste in postes %}
+            <div class="poste">
+                <h2>{{ poste.titre }}</h2>
+                <p>{{ poste.description }}</p>
+                <p>Date de fin de publication : {{ poste.date_fin_publication|date:"d/m/Y" }}</p>
+                <a href="{% url 'recrutement:connexion' %}?next={% url 'recrutement:postuler' poste.id %}" class="btn-primary">Postuler</a>
+            </div>
+        {% empty %}
+            <p>Aucun poste n'est disponible pour le moment.</p>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

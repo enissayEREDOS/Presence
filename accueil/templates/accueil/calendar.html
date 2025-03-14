@@ -1,0 +1,126 @@
+{% extends "accueil/index.html" %}
+
+{% block title %}Calendrier{% endblock %}
+{% block header_title %}Calendrier{% endblock %}
+
+{% block content %}
+<style>
+    /* Styles généraux pour le calendrier */
+    #calendar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+  }
+
+  /* Styles pour les tooltips personnalisés */
+  .tippy-tooltip.custom-theme {
+      background-color: #333;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 14px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      max-width: 300px;
+      line-height: 1.4;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+      opacity: 0;
+      transform: scale(0.9);
+  }
+
+  .tippy-tooltip.custom-theme[tippy-state~='visible'] {
+      opacity: 1;
+      transform: scale(1);
+  }
+
+  .tippy-tooltip.custom-theme:hover {
+      background-color: #444;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .fc-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 14px;
+      transition: background-color 0.2s ease;
+  }
+
+  .fc-button:hover {
+      background-color: #0056b3;
+  }
+
+  .fc-toolbar-title {
+      font-size: 24px;
+      color: #333;
+      font-weight: bold;
+  }
+
+  .fc-daygrid-day {
+      border: 1px solid #e3e3e3;
+  }
+
+  .fc-daygrid-day:hover {
+      background-color: #f1f1f1;
+  }
+
+  .fc-event {
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .fc-event:hover {
+      background-color: #e3e3e3;
+  }
+</style>
+<script src='https://unpkg.com/@popperjs/core@2.11.7/dist/umd/popper.min.js'></script>
+    <script src='https://unpkg.com/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    // Récupération des événements passés par la vue
+    var events = {{ events|safe }};
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'fr',  // Pour le calendrier en français
+      headerToolbar: {
+        left: 'prev,next today', 
+        center: 'title',
+        right: 'dayGridMonth,dayGridDay,listMonth'
+      },
+      views: {
+        listMonth: { buttonText: 'Liste' },
+        dayGridDay: { buttonText: 'Jour' },
+        dayGridMonth: { buttonText: 'Mois' }
+      },
+      events: events,
+      eventDidMount: function(info) {
+        // Crée le tooltip avec Tippy.js et applique les personnalisations
+        tippy(info.el, {
+          content: info.event.title + "<br>Date: " + info.event.start.toLocaleDateString(),
+          allowHTML: true,
+          theme: 'custom-theme',
+          animation: 'scale',
+          duration: [300, 200],
+          placement: 'top',
+          arrow: true,
+          delay: [100, 50],
+          maxWidth: '300px',
+        });
+      },
+      buttonText: {
+        today: 'Aujourd\'hui' // Texte du bouton 'Aujourd\'hui' en français
+      }
+    });
+
+    calendar.render();
+  });
+</script>
+
+<div id='calendar'></div>
+{% endblock %}

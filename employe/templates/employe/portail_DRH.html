@@ -1,0 +1,355 @@
+{% extends "accueil/index.html" %}
+{% load static %}
+
+{% block header_title %}Portail DRH{% endblock %}
+
+{% block content %}
+
+    <style>
+        /* Styles communs */
+        .container {
+            display: flex;
+            margin: 20px;
+        }
+
+        .left-column, .right-column {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        .left-column:hover, .right-column:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-column {
+            width: 68%;
+            margin-right: 20px;
+        }
+
+        .right-column {
+            width: 28%;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img.profile-photo {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 15px auto;
+        }
+
+        .card h5 {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .card button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #42a5f5, #007bff);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .card button:hover {
+            background: linear-gradient(135deg, #007bff, #42a5f5);
+        }
+
+        .card ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .card ul li {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .card ul li:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Styles pour le tableau */
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #f8f9fa;
+        }
+
+        .requests-table th, .requests-table td {
+            border: 1px solid #e2e2e2;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .requests-table th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .requests-table td.action-icons i {
+            cursor: pointer;
+            font-size: 18px;
+            margin: 0 5px;
+            transition: color 0.3s ease;
+        }
+
+        .requests-table td.action-icons i.accept {
+            color: #28a745;
+        }
+
+        .requests-table td.action-icons i.reject {
+            color: #dc3545;
+        }
+
+        .requests-table td.action-icons i:hover {
+            opacity: 0.8;
+            transform: scale(1.2);
+        }
+
+        /* Form stylé */
+        form input[type="file"], form select, form input[type="text"], form input[type="email"], form input[type="date"], form textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        form input[type="date"] {
+            background-color: #f9f9f9;
+        }
+
+        form input[type="file"]:focus, form select:focus, form input[type="text"]:focus, form input[type="email"]:focus, form input[type="date"]:focus, form textarea:focus {
+            border-color: #007bff;
+        }
+
+        form button, form input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #28a745;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        form button:hover, form input[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Partie gauche - 2/3 -->
+        <div class="left-column">
+            <!-- Carte des demandes en attente -->
+            <div class="card">
+                <img src="{% if profile_image %}{{ profile_image }}{% else %}{% static 'accueil/images/fond5.jpg' %}{% endif %}" alt="Photo de profil" class="profile-photo">
+                <h5>{{ utilisateur_prenom }} {{ utilisateur_nom }}</h5>
+                <p>Role: <strong>{{ role }}</strong></p>
+                <form method="POST" enctype="multipart/form-data" action="{% url 'employe:upload_drh' %}">
+                    {% csrf_token %}
+                    <label for="image">Changer la photo de profil</label>
+                    <input type="file" name="image" accept="image/*">
+                    <button type="submit">Modifier la photo</button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h5>Demandes de Congés en Attente de Confirmation</h5>
+                <table class="requests-table">
+                    <thead>
+                        <tr>
+                            <th>Employé</th>
+                            <th>Congé</th>
+                            <th>Début</th>
+                            <th>Fin</th>
+                            <th>Motif</th>
+                            <th>Statut</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for demande in demandes %}
+                        <tr>
+                            <td>{{ demande.employe.prenom }} {{ demande.employe.nom }}</td>
+                            <td>{{ demande.type_conge }}</td>
+                            <td>{{ demande.date_debut }}</td>
+                            <td>{{ demande.date_fin }}</td>
+                            <td>{{ demande.motif }}</td>
+                            <td>{{ demande.statut }}</td>
+                            <td class="action-icons">
+                                <i class="fa fa-check accept" title="Accepter" onclick="location.href='{% url 'employe:accepter_demande_DRH' demande.id %}'"></i>
+                                <i class="fa fa-times reject" title="Rejeter" onclick="location.href='{% url 'employe:rejeter_demande_DRH' demande.id %}'"></i>
+                            </td>                         
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">Aucune demande validée à afficher</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="card">
+                <h5>Demande de formation en attente</h5>
+                <table class="requests-table">
+                    <thead>
+                        <tr>
+                            <th>Employé</th>
+                            <th>Congé</th>
+                            <th>Début</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for formation in formations %}
+                        <tr>
+                            <td>{{ formation.employe.prenom }} {{ formation.employe.nom }}</td>
+                            <td>{{ formation.titre }}</td>
+                            <td>{{ formation.description }}</td>
+                            <td class="action-icons">
+                                <i class="fa fa-clock accept" title="Planifier" onclick="openPlanificationModal('{{ formation.id }}')"></i>
+                                <i class="fa fa-times reject" title="Rejeter" onclick="location.href='{% url 'employe:rejeter_formation' formation.id %}'"></i>
+                            </td>                                                    
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">Aucune demande validée à afficher</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+
+
+        <!-- Partie droite - 1/3 -->
+        <div class="right-column">
+            
+            <!-- Cartes supplémentaires -->
+            <div class="card">
+                <h5>Événements du jour</h5>
+                <ul>
+                    <li>Réunion avec le département marketing</li>
+                    <li>Entretien avec un candidat</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h5>Événements à venir</h5>
+                <ul>
+                    <li>Présentation de projet - Lundi</li>
+                    <li>Formation interne - Mardi</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    
+<!-- Planification de Formation Modal -->
+<div id="planificationModal" class="modal" role="dialog" aria-labelledby="modalTitlePlanification" aria-hidden="true">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Planifier la formation</h2>
+        <form id="planificationForm" method="post" action="{% url 'employe:portail_drh' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Planifier</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Fonction pour ouvrir la modal et injecter l'ID de la formation dans l'action du formulaire
+    function openPlanificationModal(formationId) {
+        var formationsModal = document.getElementById("planificationModal");
+        var form = document.getElementById("planificationForm");
+
+        // Mettre à jour l'action du formulaire avec l'ID de la formation
+        form.action = "{% url 'employe:planifier_formation' 0 %}".replace('0', formationId);
+
+        // Ouvrir la modal
+        formationsModal.style.display = "block";
+        setTimeout(function() {
+            formationsModal.classList.add("modal-open");
+        }, 10);
+    }
+
+    // Sélectionner le bouton de fermeture
+    var formationsSpan = document.querySelector("#planificationModal .close");
+
+    // Fermer le modal lorsque l'utilisateur clique sur le bouton de fermeture
+    formationsSpan.onclick = function() {
+        var formationsModal = document.getElementById("planificationModal");
+        formationsModal.classList.remove("modal-open");
+        setTimeout(function() {
+            formationsModal.style.display = "none";
+        }, 300);
+    }
+
+    // Fermer le modal lorsque l'utilisateur clique à l'extérieur de celui-ci
+    window.onclick = function(event) {
+        var formationsModal = document.getElementById("planificationModal");
+        if (event.target == formationsModal) {
+            formationsModal.classList.remove("modal-open");
+            setTimeout(function() {
+                formationsModal.style.display = "none";
+            }, 300);
+        }
+    }
+</script>
+
+
+</body>
+{% endblock %}

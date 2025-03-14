@@ -1,0 +1,279 @@
+{% extends 'accueil/index.html' %}
+{% load static %}
+
+{% block header_title %}Fiche de paye de {{ employe.prenom }} {{ employe.nom }} {% endblock %}
+
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+        }
+
+        .pay-slip {
+            width: 650px;
+            margin: 10px auto;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .pay-slip-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .pay-slip-header div {
+            width: 45%;
+        }
+
+        table {
+            width: 100%;
+            max-width: 100%; /* Limiter la largeur du tableau */
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #333;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .total {
+            font-weight: bold;
+        }
+
+        .right-align {
+            text-align: right;
+        }
+
+        .highlight {
+            background-color: #e0e7ff;
+        }
+
+        .totals {
+            margin-top: 20px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+
+        .totals-table th, .totals-table td {
+            border: none;
+            text-align: left;
+        }
+
+        .totals-table {
+            width: 100%;
+        }
+
+        
+
+
+        .floating-download-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007BFF; /* Couleur bleue pour le téléchargement */
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    
+        .floating-download-btn:hover {
+            background-color: #0056b3; /* Couleur légèrement différente au survol */
+        }
+    
+        @media print {
+            .floating-download-btn {
+                display: none; /* Cache le bouton lors de l'impression */
+            }
+        }
+
+
+        /* Largeur des colonnes */
+    th:nth-child(1),
+    td:nth-child(1) {
+        width: 10%; /* Code */
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) {
+        width: 50%; /* Désignation de l'élément de salaire */
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+        width: 15%; /* Gains */
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) {
+        width: 15%; /* Retenues */
+    }
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="pay-slip">
+        <h1>BULLETIN DE PAYE</h1>
+        <p class="right-align">Mois : {{ date_actuelle|date:"F Y" }}</p>
+
+        <div class="pay-slip-header">
+            <div>
+                <p>Matricule: {{ employe.matricule }}</p>
+                <p>Nom et Prénoms: {{ employe.prenom }} {{ employe.nom }}</p>
+                <p>Categorie: {{ employe.categorie }}</p>
+                <p>Date Embauche: {{ employe.date_debut }}</p>
+            </div>
+            <div>
+                <p>Departement: {{ employe.departement }}</p>
+                <p>Fonction: {{ employe.fonction }}</p>
+                <p>Charge: {{ employe.nombre_enfants }} enfants</p>
+                <p>N° Sécurité Sociale: {{ employe.numero_cnss }}</p>
+            </div>
+        </div>
+
+        <table>
+            <tr>
+                <th rowspan="2">Code</th>
+                <th rowspan="2">Désignation de l'élément de salaire</th>
+                <th colspan="2">Montant</th>
+            </tr>
+            <tr>
+                <th>Gains</th>
+                <th>Retenues</th>
+            </tr>
+        
+            <tr>
+                <td>1</td> <!-- Code statique pour le salaire de base -->
+                <td>Salaire de base</td>
+                <td>{{ employe.salaire_base }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>2</td> <!-- Code statique pour le sursalaire -->
+                <td>Sursalaire</td>
+                <td>{{ employe.sursalaire }}+{{ employe.prime_anciennete }}</td>
+                <td></td>
+            </tr>
+        
+            <!-- Boucle pour afficher les indemnités -->
+            {% for indemnite in employe_indemnites %}
+            <tr>
+                <td>{{ forloop.counter|add:2 }}</td> <!-- Utilisation du forloop.counter pour que le code soit incrémenté -->
+                <td>{{ indemnite.indemnite.nom }}</td>
+                <td>{{ indemnite.somme_percue }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+
+            <!-- Boucle pour afficher les retenues et revenus -->
+            {% for retenue_revenu in retenues_revenus %}
+            <tr>
+                <td>{{ forloop.counter|add:5 }}</td> <!-- Continuer l'incrémentation avec le même forloop.counter -->
+                <td>{{ retenue_revenu.description }}</td>
+                {% if retenue_revenu.type == 'REVENUE' %}
+                <td>{{ retenue_revenu.montant }}</td>
+                <td></td>
+                {% else %}
+                <td></td>
+                <td>{{ retenue_revenu.montant }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+
+            <tr>
+                <td>{{ retenues_revenus|length|add:6 }}</td> <!-- Code statique pour la retenue sociale -->
+                <td>Retenue sociale (5.5%)</td>
+                <td></td>
+                <td>{{ calcul_cnss2 }}</td>
+            </tr>
+            <tr>
+                <td>{{ retenues_revenus|length|add:7 }}</td> <!-- Code statique pour l'IUTS -->
+                <td>Retenue IUTS</td>
+                <td></td>
+                <td>{{ uits_net }}</td>
+            </tr>
+            <tr>
+                <td>{{ retenues_revenus|length|add:8 }}</td> <!-- Code statique pour l'effort de paix -->
+                <td>Effort de paix (1%)</td>
+                <td></td>
+                <td>{{ effort_de_paie }}</td>
+            </tr>
+            <tr class="highlight">
+                <td colspan="2" class="total">Total</td>
+                <td class="total">{{ total_gains }}</td>
+                <td class="total">{{ total_retenues }}</td>
+            </tr>
+        </table>
+
+        <div class="totals">
+            <table class="totals-table">
+                <tr>
+                    <th>SAL.BRUT IMPOSABLE :</th>
+                    <td>{{ salaire_brut_imposable }}</td>
+                </tr>
+                <tr>
+                    <th>BASE IMPOSABLE :</th>
+                    <td>{{ base_uits_arrondie }}</td>
+                </tr>
+                <tr>
+                    <th>Net à payer :</th>
+                    <td>{{ net_a_payer }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+<!-- Bouton flottant pour télécharger la fiche de paye -->
+<button class="floating-download-btn" onclick="telechargerFichePaye()">Télécharger la fiche de paye</button>
+</body>
+
+<script>
+    function telechargerFichePaye() {
+        var element = document.querySelector('.pay-slip'); // Sélectionner la fiche de paye
+
+        // Récupération du prénom et du nom de l'employé depuis les variables de contexte
+        var prenom = '{{ employe.prenom }}';  // Assurez-vous que ces variables sont disponibles dans le template
+        var nom = '{{ employe.nom }}';        // Assurez-vous que ces variables sont disponibles dans le template
+        var nomFichier = prenom + '_' + nom + '_fiche_de_paye.pdf'; // Création du nom de fichier
+
+        var opt = {
+            margin:       0.5,
+            filename:     nomFichier, // Utilisation du nom de fichier généré
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Convertir et télécharger la fiche de paye
+        html2pdf().from(element).set(opt).save();
+    }
+</script>
+
+{% endblock %}
+
+

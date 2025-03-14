@@ -1,0 +1,77 @@
+{% extends "accueil/index.html" %}
+
+{% block content %}
+<title>Ajouter des avantages pour {{ employe.prenom }} {{ employe.nom }}</title>
+<style>
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #f9f9f9;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+    button {
+        padding: 12px 25px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #218838;
+    }
+    h2 {
+        color: #444;
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    @media (max-width: 768px) {
+        .container {
+            width: 90%;
+            padding: 20px;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            font-size: 14px;
+        }
+        button {
+            font-size: 14px;
+            padding: 10px 20px;
+        }
+    }
+</style>
+<div class="container">
+    <h2>Ajouter des avantages pour {{ employe.prenom }} {{ employe.nom }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Ajouter les avantages</button>
+    </form>
+</div>
+{% endblock %}

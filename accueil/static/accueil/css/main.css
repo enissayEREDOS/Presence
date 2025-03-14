@@ -1,0 +1,248 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    overflow-x: hidden;
+    min-height: 100vh; /* Pour assurer le défilement du corps */
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #283618;
+    padding: 30px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: width 0.3s ease;
+    overflow-y: auto; /* Permettre le défilement vertical si le contenu dépasse */
+    scrollbar-width: thin; /* Pour Firefox */
+    scrollbar-color: #fefae0 #606c38; /* Couleur de la barre de défilement et de l'arrière-plan */
+}
+
+/* Pour les navigateurs basés sur Webkit comme Chrome */
+.sidebar::-webkit-scrollbar {
+    width: 8px; /* Largeur de la barre de défilement */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #fefae0; /* Couleur de la barre de défilement */
+    border-radius: 4px; /* Bords arrondis de la barre de défilement */
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #606c38; /* Couleur de l'arrière-plan de la barre de défilement */
+}
+
+.sidebar.hidden {
+    width: 70px;
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar .logo h3 {
+    color: #bc6c25;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    position: relative;
+    padding: 15px 20px;
+}
+
+.sidebar ul li .submenu {
+    display: none;
+    list-style: none;
+    padding-left: 20px;
+    background: #606c38;
+}
+
+.sidebar ul li .submenu li {
+    padding: 10px 0;
+}
+
+.sidebar ul li .submenu li a {
+    color: #b8c7ce;
+}
+
+.sidebar ul li.active .submenu {
+    display: block;
+}
+
+.sidebar ul li a {
+    color: #b8c7ce;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.sidebar ul li a .menu-text {
+    display: inline-block;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar.hidden ul li a .menu-text {
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+
+.sidebar ul li a.active {
+    background-color: #bc6c25;
+    color: #fefae0;
+    position: relative;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar ul li a.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background-color: #fefae0; /* Une barre verticale à gauche pour indiquer l'élément actif */
+    transition: transform 0.3s ease;
+}
+
+
+
+.sidebar ul li a:hover, .sidebar ul li a.active {
+    transform: translateX(5px); /* Ajoute un léger déplacement horizontal au hover ou quand actif */
+}
+
+
+
+
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    width: calc(100% - 250px);
+    height: auto; /* Modifié pour assurer une largeur adaptative */
+    background: #ecf0f1;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    overflow-y: auto; /* Permettre le défilement vertical */
+}
+
+.main-content.full-width {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #fefae0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+header h2 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.user-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.user-wrapper img {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+    max-height: calc(100vh - 120px); /* Ajusté pour tenir compte de l'en-tête et du bas de la page */
+    overflow-y: auto; /* Ajouté pour permettre le défilement si beaucoup de cartes */
+}
+
+.card-single {
+    display: flex;
+    justify-content: space-between;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-single h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.card-single span {
+    font-size: 20px;
+    color: #7f8c8d;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+
+
+
+/*  ######################################################   */
+.notification-icon {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+    cursor: pointer;
+    text-decoration: #283618;
+}
+
+.notification-icon .fa-bell {
+    font-size: 24px;
+}
+
+.notification-icon .badge {
+    position: absolute;
+    top: -10px;  /* Adjust as needed */
+    right: -10px; /* Adjust as needed */
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 8px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-icon:hover .fa-bell {
+    color: #bc6c25; /* Optional hover effect */
+}
+
+
+

@@ -1,0 +1,259 @@
+{% extends 'accueil/index.html' %}
+
+{% block content %}
+<style>
+    /* Import Google Font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+    body {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    /* Table styles */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    table th, table td {
+        padding: 15px;
+        border-bottom: 1px solid #eeeeee;
+        text-align: left;
+    }
+
+    table th {
+        background-color: #f8f9fa;
+        color: #333;
+        font-weight: 500;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    table td {
+        font-size: 14px;
+        color: #555;
+    }
+
+    /* Define column widths */
+    table th:nth-child(1), table td:nth-child(1) {
+        width: 15%;
+    }
+
+    table th:nth-child(2), table td:nth-child(2),
+    table th:nth-child(3), table td:nth-child(3) {
+        width: 15%;
+    }
+
+    table th:nth-child(4), table td:nth-child(4) {
+        width: 10%;
+    }
+
+    table th:nth-child(5), table td:nth-child(5) {
+        width: 15%;
+    }
+
+    table th:nth-child(6), table td:nth-child(6),
+    table th:nth-child(7), table td:nth-child(7) {
+        width: 10%;
+    }
+
+    table th:nth-child(8), table td:nth-child(8) {
+        width: 10%;
+        text-align: center;
+    }
+
+    /* Button styles */
+    a {
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    a.btn-download {
+        background-color: #28a745;
+        color: white;
+    }
+
+    a.btn-download:hover {
+        background-color: #218838;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    a.btn-reject, a.btn-schedule, a.btn-offer {
+        color: white;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    a.btn-schedule {
+        background-color: #007bff;
+    }
+
+    a.btn-schedule:hover {
+        background-color: #0069d9;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    a.btn-reject {
+        background-color: #dc3545;
+    }
+
+    a.btn-reject:hover {
+        background-color: #c82333;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    a.btn-offer {
+        background-color: #ffc107;
+    }
+
+    a.btn-offer:hover {
+        background-color: #e0a800;
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    }
+
+    /* Icon styles */
+    .icon {
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    /* Container styles */
+    h2 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .container {
+        margin: 0 auto;
+        max-width: 1200px;
+        padding: 20px;
+    }
+
+    /* Hover effect for rows */
+    table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+</style>
+
+<div class="container">
+    <!-- Liste des candidats avec 'Candidature reçue' -->
+    <h2>Candidats pour le poste de {{ poste.titre }} (Candidature reçue)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Date de candidature</th>
+                <th>Étape actuelle</th>
+                <th>CV</th>
+                <th>Lettre de motivation</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidat in candidats_recus %} 
+                <tr>
+                    <td>{{ candidat.prenom }} {{ candidat.nom }}</td>
+                    <td>{{ candidat.email }}</td>
+                    <td>{{ candidat.telephone }}</td>
+                    <td>{{ candidat.date_candidature }}</td>
+                    <td>{{ candidat.etape_processus }}</td>
+                    <td>
+                        {% if candidat.cv %}
+                            <a href="{{ candidat.cv.url }}" target="_blank" class="btn-download">
+                                <i class="fas fa-file-download icon"></i>CV
+                            </a>
+                        {% else %}
+                            Pas de CV
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if candidat.lettre_motivation %}
+                            <a href="{{ candidat.lettre_motivation.url }}" target="_blank" class="btn-download">
+                                <i class="fas fa-file-download icon"></i>Lettre
+                            </a>
+                        {% else %}
+                            Pas de lettre
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'recrutement:planifier_entretien' candidat.id %}" class="btn-schedule" title="Planifier entretien">
+                            <i class="fas fa-calendar-alt icon"></i>
+                        </a>
+                        <a href="{% url 'recrutement:rejeter_candidat' candidat.id %}" class="btn-reject" title="Rejeter candidat">
+                            <i class="fas fa-times icon"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8">Aucun candidat n'a encore postulé pour ce poste.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Liste des candidats avec 'Entretien' -->
+    <h2>Candidats pour le poste de {{ poste.titre }} (Entretien)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Date de candidature</th>
+                <th>Étape actuelle</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidat in candidats_entretien %}
+                <tr>
+                    <td>{{ candidat.prenom }} {{ candidat.nom }}</td>
+                    <td>{{ candidat.email }}</td>
+                    <td>{{ candidat.telephone }}</td>
+                    <td>{{ candidat.date_candidature }}</td>
+                    <td>{{ candidat.etape_processus }}</td>
+                    
+                    <td>
+                        </a>
+                        <a href="{% url 'recrutement:rejeter_candidat' candidat.id %}" class="btn-reject" title="Rejeter candidat">
+                            <i class="fas fa-times icon"></i>
+                        </a>
+                        <a href="{% url 'recrutement:offrir_emploi' candidat.id %}" class="btn-offer" title="Faire une offre d'emploi">
+                            <i class="fas fa-file-contract icon"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">Aucun candidat n'est à l'étape de l'entretien pour ce poste.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

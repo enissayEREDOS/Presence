@@ -1,0 +1,203 @@
+{% extends "accueil/index.html" %} 
+{% load static %}
+
+{% block header_title %}Présence{% endblock %}
+
+{% block content %}
+<style>
+    /* Style général */
+    /* Style général */
+body {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Conteneur du compteur */
+#compteur {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 40px;
+    box-sizing: border-box; /* Ajoute cette ligne */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    width: 400px;
+    height: 400px;
+    text-align: center;
+    position: relative;
+    overflow: hidden; /* Empêche le contenu de déborder */
+}
+
+/* Style du cercle de progression */
+.cercle-chronometre {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(#ff007c 0%, #ff007c 0%, #f0f0f0 0%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    transition: background 0.5s ease;
+}
+
+/* Temps restant au centre du chronomètre */
+#temps_restant {
+    font-size: 2.5em; /* Ajustez la taille de la police */
+    color: #333;
+    font-weight: bold;
+    z-index: 2;
+    position: relative;
+    line-height: 1; /* Assurez-vous que la hauteur de ligne est contrôlée */
+    max-width: 90%; /* Limite la largeur de l'élément pour éviter les débordements */
+    word-wrap: break-word;
+}
+
+/* Bouton démarrer/pause */
+.btn {
+    background-color: #ff007c;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 20px;
+    z-index: 2;
+    position: relative;
+}
+
+.btn:hover {
+    background-color: #ff005a;
+    box-shadow: 0 4px 15px rgba(255, 0, 124, 0.3);
+}
+
+/* Informations */
+.info {
+    font-size: 1.1em;
+    color: #666;
+    margin-top: 15px;
+    z-index: 2;
+    position: relative;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    #compteur {
+        width: 320px;
+        height: 320px;
+    }
+
+    #temps_restant {
+        font-size: 2.2em;
+    }
+
+    .btn {
+        padding: 10px 24px;
+        font-size: 1em;
+    }
+}
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+#compteur {
+    animation: float 6s ease-in-out infinite;
+}
+
+
+
+
+</style>
+
+<form method="POST" action="{% url 'presence:update_compteur' %}" id="compteur-form">
+    {% csrf_token %}
+    <div id="compteur">
+        <div class="cercle-chronometre"></div>
+        <div id="temps_restant">08:00:00</div>
+        <input type="hidden" name="temps_restant" id="temps_restant_input">
+        <input type="hidden" name="compteur_actif" id="compteur_actif_input" value="{{ compteur_actif|yesno:'true,false' }}">
+        <button type="submit" id="demarrer_pause" class="btn">{{ compteur_actif|yesno:"Pause,Démarrer" }}</button>
+        <div class="info">Arrivée: 08:00 - Départ: 16:00</div>
+    </div>
+</form>
+
+<script>
+    let tempsRestant = {{ temps_restant }};
+    let compteurActif = {{ compteur_actif|yesno:'true,false' }};
+    let intervalID;
+
+    function afficherTempsRestant() {
+        let heures = Math.floor(tempsRestant / 3600);
+        let minutes = Math.floor((tempsRestant % 3600) / 60);
+        let secondes = tempsRestant % 60;
+        document.getElementById("temps_restant").textContent =
+            `${heures.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+        document.getElementById("temps_restant_input").value = tempsRestant;
+
+        // Mise à jour du cercle de progression
+        let totalSeconds = 8 * 3600;
+        let percentage = ((totalSeconds - tempsRestant) / totalSeconds) * 100;
+        document.querySelector(".cercle-chronometre").style.background =
+            `conic-gradient(#ff007c ${percentage}%, #f0f0f0 ${percentage}%)`;
+    }
+
+    function lancerCompteur() {
+        compteurActif = true;
+        intervalID = setInterval(() => {
+            if (tempsRestant > 0) {
+                tempsRestant--;
+                afficherTempsRestant();
+            } else {
+                clearInterval(intervalID);
+            }
+        }, 1000);
+    }
+
+    function toggleCompteur() {
+        if (!compteurActif) {
+            lancerCompteur();
+            document.getElementById("demarrer_pause").textContent = "Pause";
+        } else {
+            clearInterval(intervalID);
+            document.getElementById("demarrer_pause").textContent = "Démarrer";
+        }
+        compteurActif = !compteurActif;
+        envoyerMiseAJour();
+    }
+
+    function envoyerMiseAJour() {
+        let formData = new FormData();
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        formData.append('temps_restant', tempsRestant);
+        formData.append('compteur_actif', compteurActif);
+
+        fetch("{% url 'presence:update_compteur' %}", {
+            method: 'POST',
+            body: formData
+        });
+    }
+
+    document.getElementById("demarrer_pause").addEventListener("click", function(event) {
+        event.preventDefault();
+        toggleCompteur();
+    });
+
+    afficherTempsRestant();
+    if (compteurActif) lancerCompteur();
+</script>
+{% endblock %}
+  

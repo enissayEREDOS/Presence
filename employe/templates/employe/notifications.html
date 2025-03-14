@@ -1,0 +1,121 @@
+{% extends "accueil/index.html" %}
+{% load static %}
+
+{% block header_title %}Notifications{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f2f5;
+    }
+
+    .notifications-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .notifications-container h2 {
+        margin-bottom: 20px;
+        font-size: 28px;
+        color: #333;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+
+    .notifications-container ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        background-color: #fff;
+        border: 1px solid #e3e3e3;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .notification-item:hover {
+        background-color: #f1f1f1;
+        transform: scale(1.02);
+    }
+
+    .notification-item.unread {
+        border-left: 5px solid #FF0000FF;
+        font-weight: bold;
+        background-color: #f9f9f9;
+    }
+
+    .notification-item p {
+        margin: 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .notification-item button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .notification-item button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .notification-item button:focus {
+        outline: none;
+    }
+
+    .notification-summary {
+        margin-top: 20px;
+        padding: 10px;
+        font-size: 18px;
+        color: #333;
+        background-color: #e9ecef;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .notification-summary span {
+        font-weight: bold;
+        color: #007bff;
+    }
+</style>
+
+<div class="notifications-container">
+    <h2>Vos Notifications</h2>
+    <ul>
+        {% for notification in notifications %}
+        <div class="notification-item {% if not notification.vue %}unread{% endif %}">
+            <p>{{ notification.message }}</p>
+            <form method="POST" action="{% url 'employe:notifications_page' %}">
+                {% csrf_token %}
+                <input type="hidden" name="notification_id" value="{{ notification.id }}">
+                <button type="submit">Lire</button>
+            </form>
+        </div>
+        {% endfor %}
+    </ul>
+    <div class="notification-summary">
+        Nombre de notifications non lues : <span>{{ unread_notifications_count }}</span>
+    </div>
+</div>
+{% endblock %}

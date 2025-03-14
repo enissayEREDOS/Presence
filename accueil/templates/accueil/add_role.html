@@ -1,0 +1,360 @@
+{% extends "accueil/index.html" %}
+
+{% block header_title %}Gérer les Rôles{% endblock %}
+
+{% block content %}
+<style>
+    /* Style général */
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px;
+        background: linear-gradient(145deg, #f5f7fa, #e4ebf5);
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid #dfe7f3;
+    }
+
+    .form-container h2 {
+        font-size: 30px;
+        color: #33475b;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .form-container form .form-control {
+        margin-bottom: 20px;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid #d1d9e6;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-container form .form-control:focus {
+        border-color: #4f7fec;
+        box-shadow: 0 0 8px rgba(79, 127, 236, 0.25);
+        outline: none;
+    }
+
+    .form-container button {
+        padding: 12px 28px;
+        font-size: 18px;
+        background-color: #4f7fec;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: block;
+        margin: 20px auto 0;
+    }
+
+    .form-container button:hover {
+        background-color: #3d6be0;
+        transform: translateY(-2px);
+    }
+
+    .roles-list h3 {
+        margin-top: 40px;
+        font-size: 24px;
+        color: #33475b;
+        text-align: center;
+    }
+
+    .roles-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .roles-table th, .roles-table td {
+        padding: 16px 20px;
+        border: 1px solid #ddd;
+        text-align: left;
+        color: #555;
+    }
+
+    .roles-table th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+    }
+
+    .roles-table td .action-icons {
+        display: flex;
+        gap: 15px;
+    }
+
+    .roles-table td .action-icons a {
+        color: #555;
+        transition: color 0.3s ease;
+    }
+
+    .roles-table td .action-icons a:hover {
+        color: #4f7fec;
+    }
+
+    /* Icônes d'action */
+    .roles-table td .edit-icon {
+        color: #4f7fec;
+    }
+
+    .roles-table td .delete-icon {
+        color: #e54d42;
+    }
+
+    /* Modern Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 16px;
+        max-width: 600px;
+        width: 90%;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        animation: fadeInModal 0.3s ease-in-out;
+    }
+
+    @keyframes fadeInModal {
+        from { 
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .close {
+        float: right;
+        font-size: 28px;
+        color: #aaa;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: #000;
+    }
+
+    .modal h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .modal button {
+        background-color: #4f7fec;
+        color: #fff;
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .modal button:hover {
+        background-color: #3d6be0;
+    }
+
+    .modal button:active {
+        background-color: #2c54c1;
+    }
+
+    /* Style pour le formulaire de rôle */
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #d1d9e6;
+        padding: 12px;
+        font-size: 16px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #4f7fec;
+        box-shadow: 0 0 8px rgba(79, 127, 236, 0.25);
+        outline: none;
+    }
+
+    .permission-checkboxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .permission-checkboxes input[type="checkbox"] {
+        margin-right: 8px;
+    }
+
+    .permission-checkboxes label {
+        display: inline-flex;
+        align-items: center;
+        font-size: 16px;
+        color: #555;
+    }
+
+
+</style>
+
+<div class="form-container">
+    <h2>Ajouter un Rôle</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Ajouter</button>
+    </form>
+</div>
+
+<div class="roles-list">
+    <h3>Liste des Rôles</h3>
+    <table class="roles-table">
+        <thead>
+            <tr>
+                <th>Nom du rôle</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for role in roles %}
+                <tr>
+                    <td>{{ role.nom }}</td>
+                    <td>{{ role.description }}</td>
+                    <td class="action-icons">
+                        <a href="javascript:void(0);" onclick="openEditModal('{{ role.id }}', '{{ role.nom }}')" class="edit-icon">
+                            ✏️
+                        </a>
+                        <a href="#" onclick="openDeleteModal('{{ role.id }}')" class="delete-icon">
+                            🗑️
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">Aucun rôle enregistré</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modals (same as before) -->
+<div id="editRoleModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Modifier le Rôle</h2>
+        <form id="editRoleForm" method="post" action="{% url 'accueil:edit_role' %}">
+            {% csrf_token %}
+            <input type="hidden" name="role_id" id="editRoleId">
+            <label for="editRoleNom">Nom du rôle</label>
+            <input type="text" id="editRoleNom" name="nom" class="form-control">
+            <button type="submit">Enregistrer les modifications</button>
+        </form>
+    </div>
+</div>
+
+<div id="deleteRoleModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Supprimer le Rôle</h2>
+        <p>Êtes-vous sûr de vouloir supprimer ce rôle ? Cette action est irréversible.</p>
+        <form id="deleteRoleForm" method="post" action="{% url 'accueil:delete_role' %}">
+            {% csrf_token %}
+            <input type="hidden" name="role_id" id="deleteRoleId">
+            <button type="submit">Confirmer la suppression</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Fonction pour ouvrir le modal d'édition avec les données du rôle
+    function openEditModal(roleId, roleNom) {
+        // Récupérer les éléments du formulaire d'édition
+        var modal = document.getElementById("editRoleModal");
+        var roleIdField = document.getElementById("editRoleId");
+        var roleNomField = document.getElementById("editRoleNom");
+
+        // Remplir les champs du formulaire avec les données actuelles
+        roleIdField.value = roleId;
+        roleNomField.value = roleNom;
+
+        // Afficher le modal
+        modal.style.display = "block";
+    }
+
+    // Fonction pour fermer le modal
+    var closeButtons = document.querySelectorAll(".close");
+    closeButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            var modal = this.closest(".modal");
+            modal.style.display = "none";
+        });
+    });
+
+    // Fermer le modal si on clique en dehors de la fenêtre
+    window.onclick = function(event) {
+        var modals = document.querySelectorAll(".modal");
+        modals.forEach(function(modal) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        });
+    };
+
+  
+        // Fonction pour ouvrir le modal de suppression
+        function openDeleteModal(roleId) {
+            // Récupérer les éléments du formulaire de suppression
+            var modal = document.getElementById("deleteRoleModal");
+            var roleIdField = document.getElementById("deleteRoleId");
+    
+            // Assigner l'ID du rôle à supprimer au champ caché
+            roleIdField.value = roleId;
+    
+            // Afficher le modal
+            modal.style.display = "block";
+        }
+    
+        // Fonction pour fermer le modal (même que celle dans le script d'édition)
+        var closeButtons = document.querySelectorAll(".close");
+        closeButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                var modal = this.closest(".modal");
+                modal.style.display = "none";
+            });
+        });
+    
+        // Fermer le modal si on clique en dehors de la fenêtre (même que celle dans le script d'édition)
+        window.onclick = function(event) {
+            var modals = document.querySelectorAll(".modal");
+            modals.forEach(function(modal) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        };
+    
+    
+</script>
+
+
+{% endblock %}

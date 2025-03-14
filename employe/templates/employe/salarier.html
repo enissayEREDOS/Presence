@@ -1,0 +1,219 @@
+{% extends "accueil/index.html" %}
+{% load static %}
+
+{% block header_title %}Salarier de l'entreprise {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Liste des Salariés</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Poste</th>
+                <th>Département</th>
+                <th>Actions</th>
+                <th>Voir Bulletin</th> <!-- Nouvelle colonne pour le bouton -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for employe in employes %}
+            <tr>
+                <td>{{ employe.prenom }}</td>
+                <td>{{ employe.nom }}</td>
+                <td>{{ employe.fonction.nom }}</td>
+                <td>{{ employe.departement.nom }}</td>
+                <td>
+                    <!-- Menu déroulant sans Bootstrap -->
+                    <div class="dropdown">
+                        <button class="dropdown-btn">Action</button>
+                        <div class="dropdown-content">
+                            <a href="javascript:void(0)" class="ajouter-element-btn" data-employe-id="{{ employe.id }}">Ajouter Élément</a>
+
+                            <!-- Formulaire caché pour ajouter sursalaire et prime d'ancienneté -->
+                            <div id="form-salaire-anciennete-{{ employe.id }}" class="form-container">
+                                <form action="{% url 'employe:ajouter_element' employe.id %}" method="post">
+                                    {% csrf_token %}
+                                    <label for="sursalaire-{{ employe.id }}">Sursalaire :</label>
+                                    <input type="number" id="sursalaire-{{ employe.id }}" name="sursalaire" step="0.01" min="0"><br>
+
+                                    <label for="prime_anciennete-{{ employe.id }}">Prime d'ancienneté :</label>
+                                    <input type="number" id="prime_anciennete-{{ employe.id }}" name="prime_anciennete" step="0.01" min="0"><br>
+
+                                    <button type="submit" class="btn-enregistrer">Enregistrer</button>
+                                </form>
+                            </div>
+
+                            <a href="{% url 'paiement:ajouter_indemnites_employe' employe.id %}">Ajouter Indemnité</a>
+                            <a href="{% url 'paiement:ajouter_avantages_employe' employe.id %}">Ajouter des avantages</a>
+                            <a href="{% url 'paiement:add_retenue_revenu' employe.id %}">Ajouter Retenue/Revenu</a>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <!-- Ajout du bouton Voir Bulletin -->
+                    <a href="{% url 'employe:salaire_brut_imposable' employe.id %}" class="btn-bulletin">Voir Bulletin</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Style -->
+<style>
+    .container {
+        padding: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 18px;
+        text-align: left;
+    }
+
+    table thead tr {
+        background-color: #606c38;
+        color: #ffffff;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    table th, table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #dddddd;
+    }
+
+    table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+
+    table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    table tbody td a {
+        color: #009879;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    table tbody td a:hover {
+        color: #00664f;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-btn {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 25px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .dropdown-btn:hover {
+        background-color: #2980b9;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+        min-width: 200px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .dropdown-content a {
+        padding: 12px 16px;
+        display: block;
+        color: #333;
+        text-align: left;
+        transition: background-color 0.3s ease;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #ddd;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown:hover .dropdown-btn {
+        background-color: #2980b9;
+    }
+
+    .form-container {
+        display: none;
+        margin-top: 20px;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .form-container.visible {
+        display: block;
+        opacity: 1;
+    }
+
+    .btn-enregistrer {
+        background-color: #009879;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-enregistrer:hover {
+        background-color: #00664f;
+    }
+
+    /* Style du bouton Voir Bulletin */
+    .btn-bulletin {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-bulletin:hover {
+        background-color: #2980b9;
+    }
+</style>
+
+<!-- Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var buttons = document.querySelectorAll('.ajouter-element-btn');
+        
+        buttons.forEach(function(button) {
+            button.addEventListener('click', function () {
+                var employeId = this.getAttribute('data-employe-id');
+                var form = document.getElementById('form-salaire-anciennete-' + employeId);
+                
+                form.classList.toggle('visible');
+            });
+        });
+    });
+</script>
+
+{% endblock %}

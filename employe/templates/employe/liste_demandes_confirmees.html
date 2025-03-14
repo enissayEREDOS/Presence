@@ -1,0 +1,155 @@
+{% extends "accueil/index.html" %}
+{% load static %}
+
+{% block header_title %}Congés{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4f8;
+    }
+
+    .conge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .conge-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        width: 320px;
+        padding: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top: 5px solid #007BFF;
+    }
+
+    .conge-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    h2 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.6em;
+    }
+
+    p {
+        margin: 10px 0;
+        color: #34495e;
+        font-size: 1em;
+    }
+
+    .statut {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-weight: bold;
+        color: #ffffff;
+        background-color: #3498db;
+        margin-top: 10px;
+    }
+
+    .statut.confirmée {
+        background-color: #28a745;
+    }
+
+    .statut.refusée {
+        background-color: #dc3545;
+    }
+
+    .statut.attente {
+        background-color: #f39c12;
+    }
+
+    /* Calendar Style */
+    .calendar-date {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        width: 80px;
+        margin-right: 10px;
+    }
+
+    .calendar-date .day {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .calendar-date .month {
+        font-size: 0.9em;
+        text-transform: uppercase;
+    }
+
+    .calendar-date .year {
+        font-size: 0.8em;
+        opacity: 0.8;
+    }
+
+    .date-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .conge-card {
+            width: 100%;
+        }
+
+        .date-container {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .calendar-date {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<div class="conge-container">
+    {% for demande in demandes_confirmees %}
+        <div class="conge-card">
+            <h2>{{ demande.employe.nom }} {{ demande.employe.prenom }}</h2>
+            <p><strong>Type de Congé :</strong> {{ demande.type_conge }}</p>
+
+            <!-- Mini Calendar for Date Display -->
+            <div class="date-container">
+                <div>
+                    <p><strong>Date Début :</strong></p>
+                    <div class="calendar-date">
+                        <div class="day">{{ demande.date_debut|date:"d" }}</div>
+                        <div class="month">{{ demande.date_debut|date:"M" }}</div>
+                        <div class="year">{{ demande.date_debut|date:"Y" }}</div>
+                    </div>
+                </div>
+
+                <div>
+                    <p><strong>Date Fin :</strong></p>
+                    <div class="calendar-date">
+                        <div class="day">{{ demande.date_fin|date:"d" }}</div>
+                        <div class="month">{{ demande.date_fin|date:"M" }}</div>
+                        <div class="year">{{ demande.date_fin|date:"Y" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <p><span class="statut {{ demande.statut|lower }}">{{ demande.statut }}</span></p>
+        </div>
+    {% empty %}
+        <p>Aucune demande confirmée trouvée.</p>
+    {% endfor %}
+</div>
+{% endblock %}

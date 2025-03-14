@@ -1,0 +1,205 @@
+{% extends "accueil/index.html" %}
+{% load static %}
+
+{% block header_title %}Présence{% endblock %}
+
+{% block content %}
+<style>
+    /* Remove container styles for full width */
+    .container {
+        width: 100%;
+        padding: 2rem;
+    }
+
+    /* Title */
+    .page-title {
+        font-size: 2rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-family: 'Arial', sans-serif;
+    }
+
+    /* Search Section */
+    .search-section {
+        margin-bottom: 2rem;
+        width: 100%;
+    }
+
+    .search-form {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        width: 100%;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .form-group label {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="date"] {
+        padding: 0.8rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-start;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex: 1;
+    }
+
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .search-btn {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .search-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .today-btn {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .today-btn:hover {
+        background-color: #218838;
+    }
+
+    /* Table */
+    .table-container {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    .presence-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        border-radius: 8px;
+    }
+
+    .presence-table th,
+    .presence-table td {
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .presence-table th {
+        background-color: #007bff;
+        color: #fff;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .presence-table td {
+        color: #333;
+    }
+
+    .presence-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .presence-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-group {
+            width: 100%;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .presence-table th, .presence-table td {
+            padding: 0.8rem;
+        }
+    }
+</style>
+<div class="container">
+    <h1 class="page-title">Liste des présences</h1>
+    <div class="search-section">
+        <form method="get" action="{% url 'presence:liste_presences' %}" class="search-form">
+            <div class="form-group">
+                <label for="nom">Nom de l'employé :</label>
+                <input type="text" id="nom" name="nom" value="{{ nom }}" placeholder="Nom de l'employé">
+            </div>
+            <div class="form-group">
+                <label for="date">Date :</label>
+                <input type="date" id="date" name="date" value="{{ date }}">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn search-btn">Rechercher</button>
+                <button type="submit" name="aujourd_hui" value="1" class="btn today-btn">Aujourd'hui</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table class="presence-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Date</th>
+                    <th>Heure d'arrivée</th>
+                    <th>Heure de départ</th>
+                    <th>Temps de travail restant</th>
+                    <th>Retard</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for presence in presences %}
+                    <tr>
+                        <td>{{ presence.employe.nom }} {{ presence.employe.prenom }}</td>
+                        <td>{{ presence.date }}</td>
+                        <td>{{ presence.heure_arrivee|date:"H:i" }}</td> <!-- Format 24h -->
+                        <td>{{ presence.heure_derniere_action|date:"H:i" }}</td> <!-- Format 24h -->
+                        <td>{{ presence.temps_restant }}</td> <!-- Format 24h -->
+                        <td>{{ presence.retard|yesno:"Oui,Non" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">Aucune présence trouvée.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

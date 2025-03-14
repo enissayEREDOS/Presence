@@ -1,0 +1,310 @@
+{% extends "accueil/index.html" %}
+{% load static %}
+
+{% block header_title %}Formations {% endblock %}
+
+{% block content %}
+<style>
+    /* Container for the page */
+    .formation-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #f0f8ff, #e6e9f0);
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Title styling */
+    .page-title {
+        text-align: center;
+        font-size: 38px;
+        margin-bottom: 40px;
+        font-weight: bold;
+        color: #3a3a3a;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .page-title::after {
+        content: '';
+        width: 80px;
+        height: 4px;
+        background-color: #007bff;
+        display: block;
+        margin: 10px auto 0;
+        border-radius: 5px;
+    }
+
+    /* Container for each formation card */
+    .formation-wrapper {
+        margin-bottom: 40px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .formation-wrapper:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        transform: translateY(-10px);
+    }
+
+    /* Formation header */
+    .formation-header {
+        text-align: center;
+        background-color: #007bff;
+        color: white;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .formation-header h4 {
+        font-size: 26px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .formation-header p {
+        font-size: 18px;
+        font-style: italic;
+        color: #f8f9fa;
+        margin-bottom: 0;
+    }
+
+    .formation-header::before {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 4px;
+        background-color: #28a745;
+        border-radius: 5px;
+    }
+
+
+
+    /* Individual formation cards */
+    .formation-card {
+        display: flex;
+        justify-content: space-between;
+        padding: 30px;
+        background-color: #fff;
+        position: relative;
+    }
+
+    .formation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 100%;
+        background: linear-gradient(135deg, #007bff, #28a745);
+    }
+
+    /* Left column: description */
+    .formation-description {
+        width: 48%;
+        font-size: 16px;
+        color: #495057;
+        padding-right: 20px;
+        border-right: 1px solid #eee;
+    }
+
+    .formation-description h4 {
+        font-size: 20px;
+        color: #343a40;
+        margin-bottom: 10px;
+    }
+
+    .formation-description p {
+        color: #6c757d;
+    }
+
+    /* Right column: date and time details */
+    .formation-dates {
+        width: 48%;
+        font-size: 16px;
+        color: #343a40;
+        padding-left: 20px;
+    }
+
+    .formation-dates p {
+        margin-bottom: 10px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+    }
+
+    .formation-dates i {
+        margin-right: 10px;
+        color: #007bff;
+    }
+
+    /* Status tag styling */
+    .formation-status {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background-color: #ffc107;
+        color: white;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    /* Divider for better spacing */
+    .divider {
+        height: 4px;
+        background-color: #007bff;
+        margin: 20px 0;
+        border-radius: 4px;
+    }
+
+    /* Message when no formations are available */
+    .no-formations {
+        text-align: center;
+        font-size: 22px;
+        margin-top: 50px;
+        color: #999;
+    }
+
+    /* Style pour le mini-calendrier */
+    .formation-dates .date-container-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+
+.mini-calendar {
+    display: inline-block;
+    width: 60px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-right: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.mini-calendar .day {
+    font-size: 22px;
+    padding: 8px 0;
+    border-bottom: 2px solid #0056b3;
+}
+
+.mini-calendar .month-year {
+    font-size: 14px;
+    padding: 5px 0;
+    text-transform: uppercase;
+}
+
+.formation-dates .date-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.formation-dates .label {
+    font-size: 16px;
+    margin-left: 10px;
+    color: #495057;
+    font-weight: bold;
+    display: inline-block;
+}
+.formation-dates .label {
+    margin-left: 0; /* Pour enlever la marge inutile */
+}
+
+
+    /* Adding responsiveness */
+    @media (max-width: 768px) {
+        .formation-card {
+            flex-direction: column;
+        }
+
+        .formation-description,
+        .formation-dates {
+            width: 100%;
+            text-align: center;
+            padding: 0;
+            border-right: none;
+        }
+
+        .divider {
+            display: none;
+        }
+    }
+</style>
+
+<div class="formation-container">
+    <h1 class="page-title">Formations Planifiées</h1>
+
+    {% if formations_planifiees %}
+        <div class="formations-grid">
+            {% for formation in formations_planifiees %}
+                <div class="formation-wrapper">
+                    <div class="formation-header">
+                        <h4>{{ formation.titre }}</h4>
+                        <p>Formateur : {{ formation.formateur }}</p>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="formation-card">
+                        <!-- Left column: description -->
+                        <div class="formation-description">
+                            <h4><i class="fas fa-info-circle"></i>Description :</h4>
+                            <p>{{ formation.description }}</p>
+                        </div>
+
+                        <!-- Right column: date and time -->
+                        <div class="formation-dates">
+                            <div class="date-container-wrapper">
+                                <div class="date-container">
+                                    <div class="mini-calendar">
+                                        <div class="day">{{ formation.date_debut|date:"d" }}</div>
+                                        <div class="month-year">{{ formation.date_debut|date:"M Y" }}</div>
+                                    </div>
+                                    <span class="label">Date début</span>
+                                </div>
+                                
+                                <div class="date-container">
+                                    <div class="mini-calendar">
+                                        <div class="day">{{ formation.date_fin|date:"d" }}</div>
+                                        <div class="month-year">{{ formation.date_fin|date:"M Y" }}</div>
+                                    </div>
+                                    <span class="label">Date fin</span>
+                                </div>
+                            </div>
+                            
+                            <p><i class="fas fa-clock"></i> De {{ formation.heure_debut|date:"H:i" }} à {{ formation.heure_fin|date:"H:i" }}</p>
+                            <span class="formation-status">{{ formation.statut }}</span>
+                        </div>
+                        
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-formations">Aucune formation planifiée.</p>
+    {% endif %}
+</div>
+{% endblock %}

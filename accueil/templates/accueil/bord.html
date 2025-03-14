@@ -1,0 +1,271 @@
+<div class="cards">
+    <div class="card-single">
+        <div>
+            <h1></h1>
+            <span></span>
+        </div>
+        <div>
+            <span class="las la-users"></span>
+        </div>
+    </div>
+    <div class="card-single">
+        <div>
+            <h1></h1>
+            <span></span>
+        </div>
+        <div>
+            <span class="las la-clipboard-list"></span>
+        </div>
+    </div>
+    <div class="card-single">
+        <div>
+            <h1></h1>
+            <span></span>
+        </div>
+        <div>
+            <span class="las la-user-times"></span>
+        </div>
+    </div>
+    <div class="card-single">
+        <div>
+            <h1></h1>
+            <span></span>
+        </div>
+        <div>
+            <span class="las la-wallet"></span>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salaire Brut Imposable</title>
+</head>
+<body>
+    <h1>Salaire Brut Imposable pour {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>Salaire Brut Imposable: {{ salaire_brut_imposable }} Fcfa</p>
+
+    <!-- Affichage des exonérations totales -->
+    <h1>Total exonoration pour {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>Exonérations Totales: {{ total_exonerations }} Fcfa</p>
+
+    <h1>Abattement des frais et charges pour {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>Abattement frais et charges: {{ abattement }} Fcfa</p>
+
+    <h1>Salaire Net Imposable pour {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>Salaire Net Imposable: {{ salaire_net_imposable }} Fcfa</p>
+
+    <h1>Base UITS Arrondie pour {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>Base UITS Arrondie: {{ base_uits_arrondie }} Fcfa</p>
+
+    <h1>UITS Brut  pour {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>UITS Brut: {{ uits_brut }} Fcfa</p>
+
+    <h1>Abatement UITS {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>Abattement UITS: {{ abattement_uits }} Fcfa</p>
+
+    <h1>UITS net {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>UITS Net: {{ uits_net }} Fcfa</p> 
+
+    <h1>Salaire Net pour {{ employe.prenom }} {{ employe.nom }}</h1>
+    <p>Salaire Net: {{ salaire_net }} FCFA</p>
+
+    <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulletin de Paie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            border: 1px solid black;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .header-section, .footer-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .net-a-payer {
+            font-weight: bold;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-section">
+        <h2>BULLETIN DE PAIE</h2>
+        <p>Mois : <strong>Décembre 2023</strong></p>
+    </div>
+
+    <!-- Informations générales de l'employé -->
+    <table>
+        <tr>
+            <td>Matricule</td>
+            <td>{{ employe.matricule }}</td>
+            <td>Nom et Prénoms</td>
+            <td>{{ employe.prenom }} {{ employe.nom }}</td>
+        </tr>
+        <tr>
+            <td>Adresse/TEL</td>
+            <td>Ouagadougou</td>
+            <td>Date Embauche</td>
+            <td>{{ employe.date_debut }}</td>
+        </tr>
+        <tr>
+            <td>Horaire</td>
+            <td>173,333</td>
+            <td>Ancienneté</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>Charge</td>
+            <td>{{ employe.nombre_enfants }}</td>
+            <td>N° Sécurité Sociale</td>
+            <td>{{ employe.numero_cnss }}</td>
+        </tr>
+        <tr>
+            <td>Mode de paiement</td>
+            <td>{{ employe.mode_paiement }}</td>
+            <td>Numéro de compte</td>
+            <td>{{ employe.numero_compte }}</td>
+        </tr>
+        <tr>
+            <td>Département/Service</td>
+            <td colspan="3">{{ employe.departement }}/{{ employe.fonction }}</td>
+        </tr>
+    </table>
+
+    <!-- Eléments de paie -->
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Désignation de l'élément de salaire</th>
+                <th>Gains</th>
+                <th>Retenues</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>001</td>
+                <td>Salaire de base</td>
+                <td>500 000 FCFA</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>002</td>
+                <td>Sursalaire</td>
+                <td>65 000 FCFA</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>003</td>
+                <td>Indemnité de logement</td>
+                <td>100 000 FCFA</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>004</td>
+                <td>Indemnité de fonction</td>
+                <td>100 000 FCFA</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>005</td>
+                <td>Indemnité de transport</td>
+                <td>100 000 FCFA</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>006</td>
+                <td>Retenue CNSS (5,5%)</td>
+                <td></td>
+                <td>33 000 FCFA</td>
+            </tr>
+            <tr>
+                <td>007</td>
+                <td>Retenue IUTS</td>
+                <td></td>
+                <td>111 439 FCFA</td>
+            </tr>
+            <tr>
+                <td>008</td>
+                <td>Effort de paix (1%)</td>
+                <td></td>
+                <td>7 206 FCFA</td>
+            </tr>
+            <tr>
+                <td>009</td>
+                <td>Autres retenues</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">TOTAL</td>
+                <td>865 000 FCFA</td>
+                <td>151 645 FCFA</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Résumé en bas de page -->
+    <table>
+        <tr>
+            <td>Taux horaire</td>
+            <td>2 885 FCFA</td>
+            <td>Heures supp.</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>Salaire brut imposable</td>
+            <td>902 000 FCFA</td>
+            <td>Base imposable</td>
+            <td>610 600 FCFA</td>
+        </tr>
+        <tr>
+            <td>Avantages en nature</td>
+            <td>0 FCFA</td>
+            <td>Net à payer</td>
+            <td class="net-a-payer">713 356 FCFA</td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
+
+
+{{ employe.sursalaire }} {{ employe.salaire_base }}

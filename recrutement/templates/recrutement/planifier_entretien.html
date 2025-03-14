@@ -1,0 +1,88 @@
+{% extends "accueil/index.html" %}
+{% load static %}
+
+{% block content %}
+<head>
+    <title>Planifier un Entretien</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="date"],
+        input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        .container a {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Planifier un entretien pour {{ candidat.prenom }} {{ candidat.nom }}</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            <label for="entretien_date">Choisissez la date de l'entretien :</label>
+            <input type="date" id="entretien_date" name="entretien_date" required>
+
+            <label for="entretien_heure">Choisissez l'heure de l'entretien :</label>
+            <input type="time" id="entretien_heure" name="entretien_heure" required>
+
+            <button class="button" type="submit">Planifier Entretien</button>
+        </form>
+
+        <a href="{% url 'recrutement:liste_candidats_poste' candidat.poste.id %}">Retour à la liste des candidats</a>
+    </div>
+</body>
+{% endblock %}

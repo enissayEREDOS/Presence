@@ -1,0 +1,153 @@
+{% extends "accueil/index.html" %}
+
+{% block header_title %}Modifier un employé{% endblock %}
+
+{% block content %}
+<style>
+    /* Style général du formulaire */
+    .form-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e1e4e8;
+    }
+
+    .form-container fieldset {
+        margin-bottom: 20px;
+        border: 1px solid #d1d9e6;
+        border-radius: 8px;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+
+    .form-container legend {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        padding: 0 10px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-container input[type="text"],
+    .form-container input[type="date"],
+    .form-container input[type="email"],
+    .form-container input[type="file"],
+    .form-container select {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid #d1d9e6;
+        margin-bottom: 15px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-container input[type="text"]:focus,
+    .form-container input[type="date"]:focus,
+    .form-container input[type="email"]:focus,
+    .form-container input[type="file"]:focus,
+    .form-container select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+        outline: none;
+    }
+
+    .form-container button {
+        padding: 14px 22px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        align-self: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: block;
+        margin: 0 auto;
+    }
+
+    .form-container button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    .form-container button:active {
+        background-color: #004080;
+        transform: translateY(0);
+    }
+</style>
+
+<div class="form-container">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <fieldset>
+            <legend>Informations Personnelles</legend>
+            {{ form.prenom.label_tag }} {{ form.prenom }}
+            {{ form.nom.label_tag }} {{ form.nom }}
+            {{ form.date_naissance.label_tag }} {{ form.date_naissance }}
+            {{ form.genre.label_tag }} {{ form.genre }}
+            {{ form.nationalite.label_tag }} {{ form.nationalite }}
+            {{ form.numero_telephone.label_tag }} {{ form.numero_telephone }}
+            {{ form.email.label_tag }} {{ form.email }}
+        </fieldset>
+
+        <fieldset>
+            <legend>Informations Professionnelles</legend>
+            {{ form.poste.label_tag }} {{ form.poste }}
+            {{ form.departement.label_tag }} {{ form.departement }}
+            {{ form.date_debut.label_tag }} {{ form.date_debut }}
+            {{ form.type_contrat.label_tag }} {{ form.type_contrat }}
+            {% if form.type_contrat.value == 'CDD' %}
+                {{ form.date_fin_contrat.label_tag }} {{ form.date_fin_contrat }}
+            {% endif %}
+            {{ form.salaire.label_tag }} {{ form.salaire }}
+            {{ form.heures_travail.label_tag }} {{ form.heures_travail }}
+            {{ form.nbr_jours_conges_AN.label_tag }} {{ form.nbr_jours_conges_AN }}
+        </fieldset>
+
+        <fieldset>
+            <legend>Documents</legend>
+            {{ form.cv.label_tag }} {{ form.cv }}
+            {{ form.lettre_motivation.label_tag }} {{ form.lettre_motivation }}
+            {{ form.contrat_travail.label_tag }} {{ form.contrat_travail }}
+            {{ form.certificats_diplomes.label_tag }} {{ form.certificats_diplomes }}
+        </fieldset>
+
+        <button type="submit">Enregistrer</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var typeContratField = document.querySelector('select[name="type_contrat"]');
+        var dateFinContratField = document.querySelector('input[name="date_fin_contrat"]').closest('fieldset');
+
+        function toggleDateFinContrat() {
+            if (typeContratField.value === 'CDD') {
+                dateFinContratField.style.display = 'block';
+            } else {
+                dateFinContratField.style.display = 'none';
+            }
+        }
+
+        typeContratField.addEventListener('change', toggleDateFinContrat);
+
+        // Initial state
+        toggleDateFinContrat();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% load static %}
+
+{% block content %}
+
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f7f9fc;
+  }
+
+  .form-container {
+    background-image: url("{% static 'accueil/images/b2b1.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .form-content {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .form-content h2 {
+    margin-bottom: 30px;
+    font-size: 24px;
+    color: #333;
+  }
+
+  .form-content input[type="text"],
+  .form-content input[type="password"],
+  .form-content input[type="email"] {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  .form-content button {
+    width: 100%;
+    padding: 15px;
+    background-color: #314d68;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+
+  .form-content button:hover {
+    background-color: #1424A0;
+  }
+
+  .form-content p {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .form-content a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .form-content a:hover {
+    text-decoration: underline;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+</style>
+
+<div class="form-container">
+  <div class="form-content">
+    <h2>Connexion</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Se connecter</button>
+
+      {% if messages %}
+        <div class="error-message">
+          {% for message in messages %}
+            {% if message.tags == 'error' %}
+              {{ message }}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+{% endblock %}

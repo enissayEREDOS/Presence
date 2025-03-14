@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.15/index.global.min.js'></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'accueil/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'accueil/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'accueil/css/register.css' %}">
+    <script defer src="{% static 'accueil/js/main.js' %}"></script>
+</head>
+<body> 
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h3>B2BRH</h3>
+        </div>
+        <ul>
+            <li><a href="{% url 'index' %}"><i class="fa-solid fa-house fa-xl"></i><span class="menu-text">Tableau de bord</span></a></li>
+
+            {% if role == 'Admin' %}
+            <li>
+                <a href="#"><i class="fa-solid fa-user-group fa-xl"></i><span class="menu-text">Gestion des utilisateurs</span></a>
+                <ul class="submenu">
+                    <li><a href="{% url 'add_role' %}">Liste des rôles</a></li>
+                    <li><a href="{% url 'register' %}">Ajouter un utilisateur</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+            {% if role in 'Admin DRH Chef de département Employé' %}
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar-alt fa-xl"></i><span class="menu-text">Calendrier</span></a></li>
+            {% endif %}
+
+            {% if role in 'Admin DRH' %}
+            <li>
+                <a href="#"><i class="fa-solid fa-user-tag fa-xl"></i><span class="menu-text">Recrutement</span></a></li>
+            {% endif %}
+
+            {% if role in 'Admin DRH Chef de département' %}
+            <li>
+                <a href="#"><i class="fa-solid fa-users-gear fa-xl"></i><span class="menu-text">Employés</span></a>
+                <ul class="submenu">
+                    <li><a href="#">Liste des employés</a></li>
+                    <li><a href="#">Ajouter un employé</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+            {% if role == 'Chef de département' %}
+            <li><a href="#"><i class="fa-solid fa-user-clock fa-xl"></i><span class="menu-text">Présence</span></a></li>
+            {% endif %}
+
+            {% if role in 'Admin DRH Chef de département' %}
+            <li><a href="#"><i class="fas fa-user-times fa-xl"></i><span class="menu-text">Absence</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-plane fa-xl"></i><span class="menu-text">Congés</span></a></li>
+            {% endif %}
+
+            {% if role in 'Admin DRH' %}
+            <li><a href="#"><i class="fas fa-tasks fa-xl"></i><span class="menu-text">Formation</span></a></li>
+            {% endif %}
+
+            {% if role == 'DRH' %}
+            <li><a href="#"><i class="fa-solid fa-address-card fa-xl"></i><span class="menu-text">Portail DRH</span></a></li>
+            {% endif %}
+
+            {% if role == 'Chef de département' %}
+            <li><a href="#"><i class="fa-solid fa-address-card fa-xl"></i><span class="menu-text">Portail chef de département</span></a></li>
+            {% endif %}
+
+            {% if role == 'Admin' %}
+            <li><a href="#"><i class="fas fa-money-bill-wave fa-xl"></i><span class="menu-text">Paie</span></a></li>
+            <li><a href="#"><i class="fas fa-building fa-xl"></i><span class="menu-text">Données de l'entreprise</span></a></li>
+            {% endif %}
+
+            {% if role == 'Employé' %}
+            <li><a href="#"><i class="fa-solid fa-address-card fa-xl"></i><span class="menu-text">Portail employé</span></a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="main-content" id="main-content">
+        <header>
+            <button id="menu-btn" class="menu-btn">☰</button>
+            <h2>{% block header_title %}Tableau de Bord{% endblock %}</h2>
+            <div class="user-wrapper">
+                <img src="{% static 'accueil/images/fond5.jpg' %}" alt="User" width="40px" height="40px">
+                <div>
+                    <h4>{{ utilisateur_prenom }} {{ utilisateur_nom }}</h4>
+                    <small>{{ role }}</small>
+                </div>
+            </div>
+        </header>
+        <div class="content">
+            {% block content %}
+            <!-- Le contenu spécifique aux pages sera rendu ici -->
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>

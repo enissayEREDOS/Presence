@@ -1,0 +1,252 @@
+{% extends "accueil/index.html" %}
+{% load static %}
+
+{% block header_title %}Portail Chef de Département{% endblock %}
+
+{% block content %}
+
+    <style>
+        
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+            gap: 20px;
+        }
+
+        /* Colonnes */
+        .left-column, .right-column {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-column {
+            width: 66%;
+        }
+
+        .right-column {
+            width: 30%;
+        }
+
+        /* Cartes */
+        .card {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 0 auto;
+            border: 4px solid #bc6c25;
+        }
+
+        .profile-photoh {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 0 auto;
+            border: 4px solid #bc6c25;
+        }
+
+
+        .card h5 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+        .card p {
+            text-align: center;
+            color: #777;
+        }
+
+        .card button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .card button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Tableau des demandes */
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .requests-table th, .requests-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .requests-table th {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .requests-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .requests-table .action-icons i {
+            cursor: pointer;
+            font-size: 18px;
+            margin: 0 10px;
+        }
+
+        .requests-table .action-icons i.accept {
+            color: #28a745;
+        }
+
+        .requests-table .action-icons i.reject {
+            color: #dc3545;
+        }
+
+        .requests-table .action-icons i:hover {
+            opacity: 0.7;
+        }
+
+        /* Listes des événements */
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card ul li {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .card ul li:hover {
+            background-color: #e9ecef;
+        }
+
+        /* Formulaire */
+        form input, form select, form textarea, form button {
+            font-size: 14px;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        form button {
+            background-color: #28a745;
+            color: white;
+        }
+
+        form button:hover {
+            background-color: #218838;
+        }
+    </style>
+
+    <div class="container">
+        <!-- Colonne de gauche -->
+        <div class="left-column">
+            <!-- Carte du profil -->
+            <div class="card">
+                <img  src="{% if profile_image %}{{ profile_image }}{% else %}{% static 'accueil/images/fond5.jpg' %}{% endif %}" alt="Photo de profil" class="profile-photo">
+                <h5>{{ utilisateur_prenom }} {{ utilisateur_nom }}</h5>
+                <p>Role: <strong>{{ role }}</strong></p>
+                <form method="POST" enctype="multipart/form-data" action="{% url 'employe:upload_chef' %}">
+                    {% csrf_token %}
+                    <label for="image">Changer la photo de profil</label>
+                    <input type="file" name="image" accept="image/*">
+                    <button type="submit">Modifier la photo</button>
+                </form>
+            </div>
+            
+            <!-- Carte des demandes -->
+            <div class="card">
+                <h5>Demandes de Congés en Attente</h5>
+                <table class="requests-table">
+                    <thead>
+                        <tr>
+                            <th>Employé</th>
+                            <th>Congé</th>
+                            <th>Début</th>
+                            <th>Fin</th>
+                            <th>Motif</th>
+                            <th>Statut</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for demande in demandes %}
+                        <tr>
+                            <td>{{ demande.employe.prenom }} {{ demande.employe.nom }}</td>
+                            <td>{{ demande.type_conge }}</td>
+                            <td>{{ demande.date_debut }}</td>
+                            <td>{{ demande.date_fin }}</td>
+                            <td>{{ demande.motif }}</td>
+                            <td>{{ demande.statut }}</td>
+                            <td class="action-icons">
+                                <i class="fa fa-check accept" title="Accepter" onclick="location.href='{% url 'employe:accepter_demande' demande.id %}'"></i>
+                                <i class="fa fa-times reject" title="Rejeter" onclick="location.href='{% url 'employe:rejeter_demande' demande.id %}'"></i>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">Aucune demande en attente</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Colonne de droite -->
+        <div class="right-column">
+            <!-- Événements du jour -->
+            <div class="card">
+                <h5>Événements du Jour</h5>
+                <ul>
+                    <li>Réunion avec le département marketing</li>
+                    <li>Entretien avec un candidat</li>
+                </ul>
+            </div>
+            
+            <!-- Événements à venir -->
+            <div class="card">
+                <h5>Événements à venir</h5>
+                <ul>
+                    <li>Présentation de projet - Lundi</li>
+                    <li>Formation interne - Mardi</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

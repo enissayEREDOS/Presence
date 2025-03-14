@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2BRH</title>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.15/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/list.min.js'></script>
+    <!-- FullCalendar CSS -->
+<link href='https://unpkg.com/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
+
+<!-- FullCalendar JS -->
+<script src='https://unpkg.com/fullcalendar@5.11.0/main.min.js'></script>
+
+<!-- FullCalendar Plugins JS -->
+<script src='https://unpkg.com/fullcalendar@5.11.0/list.min.js'></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'accueil/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'accueil/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'accueil/css/register.css' %}">
+    <script defer src="{% static 'accueil/js/main.js' %}"></script>
+</head>
+<body> 
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h3>B2BRH</h3>
+        </div>
+        <ul>
+            {% if 'Tableau de bord' in request.session.user_permissions %}
+            <li><a href="{% url 'accueil:tableau_de_bord' %}"><i class="fa-solid fa-house fa-xl"></i><span class="menu-text">Tableau de bord</span></a></li>
+            {% endif %}
+
+            {% if 'Portail DRH' in request.session.user_permissions %}
+            <li><a href="{% url 'employe:portail_drh' %}"><i class="fa-solid fa-address-card fa-xl"></i><span class="menu-text">Portail DRH</span></a></li>
+            {% endif %}
+
+            {% if 'Portail CD' in request.session.user_permissions %}
+            <li><a href="{% url 'employe:portail_chef_de_departement' %}"><i class="fa-solid fa-address-card fa-xl"></i><span class="menu-text">Portail chef de département</span></a></li>
+            {% endif %}
+
+            {% if 'Portail employé' in request.session.user_permissions %}
+            <li><a href="{% url 'employe:portail_employe' %}"><i class="fa-solid fa-address-card fa-xl"></i><span class="menu-text">Portail employé</span></a></li>
+            {% endif %}
+
+            {% if 'utilisateur' in request.session.user_permissions %}
+            <li>
+                <a href="#"><i class="fa-solid fa-user-group fa-xl"></i><span class="menu-text">Gestion des utilisateurs</span></a>
+                <ul class="submenu">
+                    <li><a href="{% url 'accueil:add_role' %}">Liste des rôles</a></li>
+                    <li><a href="{% url 'accueil:register' %}">Ajouter un utilisateur</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+            {% if 'Calendrier' in request.session.user_permissions %}
+            <li><a href="{% url 'accueil:calendar' %}"><i class="fas fa-calendar-alt fa-xl"></i><span class="menu-text">Calendrier</span></a></li>
+            {% endif %}
+
+            
+
+            {% if 'employe' in request.session.user_permissions %}
+            <li>
+                <a href="#"><i class="fa-solid fa-users-gear fa-xl"></i><span class="menu-text">Employés</span></a>
+                <ul class="submenu">
+                    <li><a href="{% url 'employe:employe_list' %}"><i class="fa fa-user-tie fa-xl"></i>Liste des employés</a></li>
+                    <li><a href="{% url 'employe:add_employe' %}">Ajouter un employé</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
+            {% if 'Présence' in request.session.user_permissions %}
+            <li><a href="{% url 'presence:liste_presences' %}"><i class="fa-solid fa-user-clock fa-xl"></i><span class="menu-text">Présence</span></a></li>
+            {% endif %}
+
+            {% if 'Absences' in request.session.user_permissions %}
+            <li><a href="{% url 'employe:liste_absences' %}"><i class="fas fa-user-times fa-xl"></i><span class="menu-text">Absence</span></a></li>
+            {% endif %}
+
+            {% if 'Congés' in request.session.user_permissions %}
+            <li><a href="{% url 'employe:liste_demandes_confirmees' %}"><i class="fa-solid fa-plane fa-xl"></i><span class="menu-text">Congés</span></a></li>
+            {% endif %}
+
+            {% if 'Formation' in request.session.user_permissions %}
+            <li><a href="{% url 'employe:formations_planifiees' %}"><i class="fas fa-tasks fa-xl"></i><span class="menu-text">Formation</span></a></li>
+            {% endif %}
+
+            {% if 'Recrutement' in request.session.user_permissions %}
+            <li>
+                <a href="{% url 'recrutement:ajouter_poste' %}"><i class="fa-solid fa-user-tag fa-xl"></i><span class="menu-text">Recrutement</span></a></li>
+            {% endif %}
+            
+            {% if 'Paie' in request.session.user_permissions %}
+            <li><a href="{% url 'employe:liste_employes' %}"><i class="fas fa-money-bill-wave fa-xl"></i><span class="menu-text">Paie</span></a></li>
+            {% endif %}
+
+            {% if 'Données' in request.session.user_permissions %}
+            <li><a href="{% url 'accueil:configuration' %}"><i class="fas fa-building fa-xl"></i><span class="menu-text">Données de l'entreprise</span></a></li>
+            {% endif %}
+
+        </ul>
+    </div>
+    <div class="main-content" id="main-content">
+        <header>
+            <button id="menu-btn" class="menu-btn">☰</button>
+            <h2>{% block header_title %}Tableau de Bord{% endblock %}</h2>
+
+
+            <div class="user-wrapper">
+                <img src="{% if profile_image %}{{ profile_image }}{% else %}{% static 'accueil/images/fond5.jpg' %}{% endif %}" alt="Photo de profil" class="profile-photoh" width="40px" height="40px">
+                <div>
+                    
+                    <h4>{{ utilisateur_prenom }} {{ utilisateur_nom }}</h4>
+                    <small>{{ role }}</small>
+                </div>
+                <a href="{% url 'employe:notifications_page' %}">
+                    <div class="notification-icon">
+                        <i style="text-decoration: none; color: #283618; top: -1px;" class="fas fa-bell fa-xl"></i>
+                        <span class="badge" style="background-color: red; color: white; border-radius: 50%; padding: 4px 7px; font-size: 12px; top: -7px; right: -15px;">
+                            {{ unread_notifications_count }}
+                        </span>
+                    </div>
+                </a>
+                <a href="{% url 'accueil:user_dec' %}" class="logout-btn">
+                    <button style="background-color: #FF0000; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">
+                        <i class="fas fa-power-off"></i>
+                    </button>
+                </a>                
+            </div>
+        </header>
+        <div class="content">
+            {% block content %}
+            <!-- Le contenu spécifique aux pages sera rendu ici -->
+             
+            {% endblock %}
+        </div>
+    </div>
+</body>
+<script>
+// Sélectionne tous les liens de la barre latérale
+let sidebarLinks = document.querySelectorAll('.sidebar ul li a');
+
+// Ajoute un événement de clic à chaque lien
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', function() {
+        // Retire la classe active de tous les liens
+        sidebarLinks.forEach(link => link.classList.remove('active'));
+        
+        // Ajoute la classe active au lien cliqué
+        this.classList.add('active');
+    });
+});
+</script>
+</html>

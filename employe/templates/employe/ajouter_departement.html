@@ -1,0 +1,118 @@
+<!-- templates/ajouter_departement.html -->
+{% extends "accueil/index.html" %}
+
+{% block content %}
+    <style>
+        /* Conteneur principal */
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-out;
+        }
+
+        h2 {
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Style des champs de formulaire */
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* Amélioration du champ de description */
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"]::placeholder,
+        textarea::placeholder {
+            color: #aaa;
+        }
+
+        /* Style du bouton */
+        button[type="submit"] {
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Ajout d'une animation d'apparition */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Corps de la page */
+        body {
+            background-color: #f4f7fc;
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+
+    <div class="form-container">
+        <h2>Ajouter un Département</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="id_nom">Nom du Département</label>
+            {{ form.nom }}
+            <label for="id_description">Description</label>
+            {{ form.description }}
+            <button type="submit">Enregistrer</button>
+        </form>
+    </div>
+{% endblock %}
